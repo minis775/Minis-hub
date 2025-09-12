@@ -1,603 +1,609 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
+--[[
+you better have a good reason on WHY you are looking at the script raw
+]]
+if not game.Players.LocalPlayer.PlayerScripts:FindFirstChild("Loaded") then
+	local data = Instance.new("NumberValue") --does this really matter no i added it for a damn reason
+	data.Name = "Loaded"
+	data.Parent = game.Players.LocalPlayer.PlayerScripts
+	print("Loaded Scripts")
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+local event = ""
+local fling = false
+local opt = false
+local antiteleport = false
+local range = 15
+local partsdipping = false
+-- Create the main window
+local noclip = false
+local speed = 16
+local infjump = false
+local fakerun = false
+local infjumpv2 = false
+	local antifling = false
+	local RunService = game:GetService("RunService")
+	local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local bodyVelocity = Instance.new("BodyVelocity")
 local Window = Rayfield:CreateWindow({
-   Name = "minis",
-   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
-   LoadingTitle = "Rayfield Interface Suite",
-   LoadingSubtitle = "by minis",
-   ShowText = "Rayfield", -- for mobile users to unhide rayfield, change if you'd like
-   Theme = "Bloom", -- Check https://docs.sirius.menu/rayfield/configuration/themes
-
-   ToggleUIKeybind = "K", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
-
-   DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
-
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil, -- Create a custom folder for your hub/game
-      FileName = "Big Hub"
-   },
-
-   Discord = {
-      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
-      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
-      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
-   },
-
-   KeySystem = false, -- Set this to true to use our key system
-   KeySettings = {
-      Title = "Untitled",
-      Subtitle = "Key System",
-      Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
-      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-      Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
-   }
-})
-
-local MainTab = Window:CreateTab("Tab Example", 4483362458) -- Title, Image
- 
-local Button = MainTab:CreateButton({
-	Name = "print 'Auto Fishing'",
-	Callback = function(v)
-		v = print('Auto Fishing')
-	end,
- })
-
--- Loads and executes a function hosted on a remote URL. Cancels the request if the requested URL takes too long to respond.
--- Errors with the function are caught and logged to the output
-local function loadWithTimeout(url: string, timeout: number?): ...any
-	assert(type(url) == "string", "Expected string, got " .. type(url))
-	timeout = timeout or 5
-	local requestCompleted = false
-	local success, result = false, nil
-
-	local requestThread = task.spawn(function()
-		local fetchSuccess, fetchResult = pcall(game.HttpGet, game, url) -- game:HttpGet(url)
-		-- If the request fails the content can be empty, even if fetchSuccess is true
-		if not fetchSuccess or #fetchResult == 0 then
-			if #fetchResult == 0 then
-				fetchResult = "Empty response" -- Set the error message
-			end
-			success, result = false, fetchResult
-			requestCompleted = true
-			return
-		end
-		local content = fetchResult -- Fetched content
-		local execSuccess, execResult = pcall(function()
-			return loadstring(content)()
-		end)
-		success, result = execSuccess, execResult
-		requestCompleted = true
-	end)
-
-	local timeoutThread = task.delay(timeout, function()
-		if not requestCompleted then
-			warn(`Request for {url} timed out after {timeout} seconds`)
-			task.cancel(requestThread)
-			result = "Request timed out"
-			requestCompleted = true
-		end
-	end)
-
-	-- Wait for completion or timeout
-	while not requestCompleted do
-		task.wait()
-	end
-	-- Cancel timeout thread if still running when request completes
-	if coroutine.status(timeoutThread) ~= "dead" then
-		task.cancel(timeoutThread)
-	end
-	if not success then
-		warn(`Failed to process {url}: {result}`)
-	end
-	return if success then result else nil
-end
-
-local requestsDisabled = true --getgenv and getgenv().DISABLE_RAYFIELD_REQUESTS
-local InterfaceBuild = '3K3W'
-local Release = "Build 1.68"
-local RayfieldFolder = "Rayfield"
-local ConfigurationFolder = RayfieldFolder.."/Configurations"
-local ConfigurationExtension = ".rfld"
-local settingsTable = {
-	General = {
-		-- if needs be in order just make getSetting(name)
-		rayfieldOpen = {Type = 'bind', Value = 'K', Name = 'Rayfield Keybind'},
-		-- buildwarnings
-		-- rayfieldprompts
-
+	Name = "Ministry hub",
+	LoadingTitle = "Please wait",
+	LoadingSubtitle = "By windows11_2nd",
+	ShowText = "Ministry hub", 
+	ConfigurationSaving = { 
+		Enabled = true,
+		FolderName = "Exploits", 
+		FileName = "Tools"
 	},
-	System = {
-		usageAnalytics = {Type = 'toggle', Value = true, Name = 'Anonymised Analytics'},
-	}
-}
+	Discord = {
+		Enabled = false,
+		Invite = "",
+		RememberJoins = true
+	},
+	KeySystem = false 
+})
+Rayfield:Notify({
+	Title = "Warning",
+	Content = "This is the only OFFICAL Ministry hub watch out for fake versions.",
+	Duration = 4
+})
+-- Create a tab
+local Tab = Window:CreateTab("Universial", 4483362458)
+local Tab2 = Window:CreateTab("MM2", 4483362458)
+local Tab3 = Window:CreateTab("Fred's House", 4483362458)
 
--- Settings that have been overridden by the developer. These will not be saved to the user's configuration file
--- Overridden settings always take precedence over settings in the configuration file, and are cleared if the user changes the setting in the UI
-local overriddenSettings: { [string]: any } = {} -- For example, overriddenSettings["System.rayfieldOpen"] = "J"
-local function overrideSetting(category: string, name: string, value: any)
-	overriddenSettings[`{category}.{name}`] = value
-end
-
-local function getSetting(category: string, name: string): any
-	if overriddenSettings[`{category}.{name}`] ~= nil then
-		return overriddenSettings[`{category}.{name}`]
-	elseif settingsTable[category][name] ~= nil then
-		return settingsTable[category][name].Value
+-- Add a button
+Tab:CreateButton({
+Name = "Get all tools",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "Message",
+			Content = "Getting all tools!",
+			Duration = 4
+		})
+		for i,v in pairs(game:GetDescendants()) do
+			if v:IsA("Tool") then
+				v:Clone().Parent = game.Players.LocalPlayer.Backpack
+			end
+		end
 	end
-end
-
--- If requests/analytics have been disabled by developer, set the user-facing setting to false as well
-if requestsDisabled then
-	overrideSetting("System", "usageAnalytics", false)
-end
-
-local HttpService = getService('HttpService')
-local RunService = getService('RunService')
-
--- Environment Check
-local useStudio = RunService:IsStudio() or false
-
-local settingsCreated = false
-local settingsInitialized = false -- Whether the UI elements in the settings page have been set to the proper values
-local cachedSettings
-local prompt = useStudio and require(script.Parent.prompt) or loadWithTimeout('https://raw.githubusercontent.com/SiriusSoftwareLtd/Sirius/refs/heads/request/prompt.lua')
-local requestFunc = (syn and syn.request) or (fluxus and fluxus.request) or (http and http.request) or http_request or request
-
--- Validate prompt loaded correctly
-if not prompt and not useStudio then
-	warn("Failed to load prompt library, using fallback")
-	prompt = {
-		create = function() end -- No-op fallback
-	}
-end
-
-
-
-local function loadSettings()
-	local file = nil
-
-	local success, result =	pcall(function()
-		task.spawn(function()
-			if isfolder and isfolder(RayfieldFolder) then
-				if isfile and isfile(RayfieldFolder..'/settings'..ConfigurationExtension) then
-					file = readfile(RayfieldFolder..'/settings'..ConfigurationExtension)
+})
+Tab:CreateButton({
+	Name = "Teleport to tools (workspace)",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "Message",
+			Content = "Getting all tools!",
+			Duration = 4
+		})
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("Tool") then
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Handle.CFrame
+				task.wait()
+			end
+		end
+	end
+})
+Tab:CreateButton({
+	Name = "Teleport to every parts (workspace)",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "Message",
+			Content = "Teleporting..",
+			Duration = 4
+		})
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("BasePart") then
+				game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.CFrame
+				task.wait()
+			end
+		end
+	end
+})
+Tab:CreateButton({
+	Name = "Aimbot",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "HUD",
+			Content = "Setting up aimbot!",
+			Duration = 4
+		})
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("Model") then
+				local player = game.Players:GetPlayerFromCharacter(v)
+				if player then
+					game.Players.LocalPlayer:GetMouse().Target = player.Character.HumanoidRootPart
+					task.wait(0.15)
 				end
 			end
-
-			-- for debug in studio
-			if useStudio then
-				file = [[
-		{"General":{"rayfieldOpen":{"Value":"K","Type":"bind","Name":"Rayfield Keybind","Element":{"HoldToInteract":false,"Ext":true,"Name":"Rayfield Keybind","Set":null,"CallOnChange":true,"Callback":null,"CurrentKeybind":"K"}}},"System":{"usageAnalytics":{"Value":false,"Type":"toggle","Name":"Anonymised Analytics","Element":{"Ext":true,"Name":"Anonymised Analytics","Set":null,"CurrentValue":false,"Callback":null}}}}
-	]]
-			end
-
-
-			if file then
-				local success, decodedFile = pcall(function() return HttpService:JSONDecode(file) end)
-				if success then
-					file = decodedFile
-				else
-					file = {}
-				end
-			else
-				file = {}
-			end
-
-
-			if not settingsCreated then 
-				cachedSettings = file
-				return
-			end
-
-			if file ~= {} then
-				for categoryName, settingCategory in pairs(settingsTable) do
-					if file[categoryName] then
-						for settingName, setting in pairs(settingCategory) do
-							if file[categoryName][settingName] then
-								setting.Value = file[categoryName][settingName].Value
-								setting.Element:Set(getSetting(categoryName, settingName))
+		end
+	end
+})
+Tab2:CreateButton({
+	Name = "Read Users (only after round started)",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "Heads Up",
+			Content = "Fetching for people",
+			Duration = 4
+		})
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("Model") then
+				local player = game.Players:GetPlayerFromCharacter(v)
+				if player then
+					for i,v in pairs(player.Backpack:GetChildren()) do
+						if v:IsA("Tool") then
+							if v.Name ~= "Emotes" then
+								if v.Name ~= "AAAAA" then
+									local hl = Instance.new("Highlight")
+									local bb = Instance.new("BillboardGui")
+									local tt = Instance.new("TextLabel")
+									hl.FillColor = Color3.new(1, 1, 1)
+									hl.OutlineColor = Color3.new(1, 1, 1)
+									hl.Parent = player.Character
+									bb.Size = UDim2.new(0,100,0,25)
+									tt.Text = v.Name
+									bb.AlwaysOnTop = true
+									tt.BackgroundTransparency = 1
+									tt.TextColor3 = Color3.new(1, 1, 1)
+									tt.TextScaled = true
+									tt.Font = Enum.Font.BuilderSansBold
+									bb.StudsOffsetWorldSpace = Vector3.new(0,4,0)
+									tt.Parent = bb
+									bb.Enabled = true
+									tt.TextTransparency = 0
+									tt.Visible = true
+									tt.Size = UDim2.new(1,0,1,0)
+									bb.Parent = player.Character
+									if v.Name == "Knife" then
+										hl.FillColor = Color3.new(1, 0, 0)
+									end
+									if v.Name == "Gun" then
+										hl.FillColor = Color3.new(0, 0.482353, 1)
+									end
+								end
 							end
 						end
 					end
 				end
 			end
-			settingsInitialized = true
-		end)
-	end)
-
-	if not success then 
-		if writefile then
-			warn('Rayfield had an issue accessing configuration saving capability.')
 		end
 	end
-end
-
-if debugX then
-	warn('Now Loading Settings Configuration')
-end
-
-loadSettings()
-
-if debugX then
-	warn('Settings Loaded')
-end
-
-local analyticsLib
-local sendReport = function(ev_n, sc_n) warn("Failed to load report function") end
-if not requestsDisabled then
-	if debugX then
-		warn('Querying Settings for Reporter Information')
-	end	
-	analyticsLib = loadWithTimeout("https://analytics.sirius.menu/script")
-	if not analyticsLib then
-		warn("Failed to load analytics reporter")
-		analyticsLib = nil
-	elseif analyticsLib and type(analyticsLib.load) == "function" then
-		analyticsLib:load()
-	else
-		warn("Analytics library loaded but missing load function")
-		analyticsLib = nil
-	end
-	sendReport = function(ev_n, sc_n)
-		if not (type(analyticsLib) == "table" and type(analyticsLib.isLoaded) == "function" and analyticsLib:isLoaded()) then
-			warn("Analytics library not loaded")
-			return
+})
+Tab:CreateButton({
+	Name = "Fetch for Users",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "Heads Up!",
+			Content = "Fetching for players...",
+			Duration = 4
+		})
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("Model") then
+				local player = game.Players:GetPlayerFromCharacter(v)
+				if player then
+					local hl = Instance.new("Highlight")
+					hl.FillColor = Color3.new(1, 1, 1)
+					hl.OutlineColor = Color3.new(1, 1, 1)
+					hl.Parent = player.Character
+				end
+			end
 		end
-		if useStudio then
-			print('Sending Analytics')
+	end
+})
+Tab:CreateButton({
+	Name = "Fetch for Users (Via username)",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "Heads Up!",
+			Content = "Fetching for players by username...",
+			Duration = 4
+		})
+		for i,part in pairs(workspace:GetDescendants()) do
+			if part:IsA("Model") then
+				local player = game.Players
+				for i,v in pairs(player:GetDescendants()) do
+					if v:IsA("Player") then
+						if v.Name == part.Name then
+							local hl = Instance.new("Highlight")
+							hl.FillColor = Color3.new(1, 1, 1)
+							hl.OutlineColor = Color3.new(1, 1, 1)
+							hl.Parent = v.Character
+						end
+					end
+				end
+			end
+		end
+	end
+})
+Tab2:CreateButton({
+	Name = "Go to Sheriff (only after round started)",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "Heads Up",
+			Content = "Fetching for sheriff",
+			Duration = 4
+		})
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("Model") then
+				local player = game.Players:GetPlayerFromCharacter(v)
+				if player then
+					for i,v in pairs(player.Backpack:GetChildren()) do
+						if v:IsA("Tool") and v.Name == "Gun" then
+							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
+						end
+					end
+				end
+			end
+		end
+	end
+})
+Tab2:CreateButton({
+	Name = "Go to Murderer (only after round started)",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "Heads Up",
+			Content = "Fetching for murderer",
+			Duration = 4
+		})
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("Model") then
+				local player = game.Players:GetPlayerFromCharacter(v)
+				if player then
+					for i,v in pairs(player.Backpack:GetChildren()) do
+						if v:IsA("Tool") and v.Name == "Knife" then
+							game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame
+						end
+					end
+				end
+			end
+		end
+	end
+})
+Tab:CreateButton({
+	Name = "Teleport to everyone",
+	Callback = function()
+		Rayfield:Notify({
+			Title = "Heads Up!",
+			Content = "Teleporting To everyone (5ms)!",
+			Duration = 4
+		})
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("Model") then
+				local plr = game.Players:GetPlayerFromCharacter(v)
+				if plr then
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame
+					task.wait(0.5)
+				end
+			end
+		end
+	end
+})
+Tab:CreateSlider({
+	Name = "Speed",
+	Range = {1, 100},
+	Increment = 1,
+	Suffix = "USpeed",
+	CurrentValue = 16,
+	Flag = "UserSpeed",
+	Callback = function(Value)
+		game.Players.LocalPlayer.Character:WaitForChild("Humanoid").WalkSpeed = Value
+		speed = Value
+	end,
+})
+Tab:CreateInput({
+	Name = "RemoteEvents",
+	CurrentValue = "",
+	PlaceholderText = "Fire all remote event text",
+	RemoveTextAfterFocusLost = false,
+	Flag = "FARET",
+	Callback = function(Text)
+		for i,v in pairs(game.ReplicatedStorage:GetDescendants()) do
+			if v:IsA("RemoteEvent") then
+				v:FireServer(Text)
+			end
+		end
+	end,
+})
+local Toggle = Tab:CreateToggle({
+	Name = "Noclip",
+	CurrentValue = false,
+	Flag = "Nocliping", 
+	Callback = function(Value)
+		noclip = Value
+	end,
+})
+local Toggle = Tab:CreateToggle({
+	Name = "Xray",
+	CurrentValue = false,
+	Flag = "Xray",
+	Callback = function(Value)
+		if Value == true then
+			for i,v in pairs(workspace:GetDescendants()) do
+				if v:IsA("BasePart") then
+					v.LocalTransparencyModifier = 0.5
+				end
+			end
 		else
-			if debugX then warn('Reporting Analytics') end
-			analyticsLib:report(
-				{
-					["name"] = ev_n,
-					["script"] = {["name"] = sc_n, ["version"] = Release}
-				},
-				{
-					["version"] = InterfaceBuild
-				}
-			)
-			if debugX then warn('Finished Report') end
+			for i,v in pairs(workspace:GetDescendants()) do
+				if v:IsA("BasePart") then
+					v.LocalTransparencyModifier = 0
+				end
+			end
+		end
+	end,
+})
+Tab:CreateButton({
+	Name = "Remove Client Kick Scripts",
+	Callback = function()
+		for i,v in pairs(workspace:GetDescendants()) do
+			if v:IsA("LocalScript") then
+				if v.Source:lower():find("kick") then
+					v:Destroy()
+				end
+			end
 		end
 	end
-	if cachedSettings and (#cachedSettings == 0 or (cachedSettings.System and cachedSettings.System.usageAnalytics and cachedSettings.System.usageAnalytics.Value)) then
-		sendReport("execution", "Rayfield")
-	elseif not cachedSettings then
-		sendReport("execution", "Rayfield")
+})
+local Toggle = Tab:CreateToggle({
+	Name = "Optimization",
+	CurrentValue = false,
+	Flag = "opt",
+	Callback = function(Value)
+		opt = Value
+	end,
+})
+Tab:CreateSlider({
+	Name = "Render",
+	Range = {1, 100},
+	Increment = 1,
+	Suffix = "rendering",
+	CurrentValue = 15,
+	Flag = "renderopt", 
+	Callback = function(Value)
+		range = Value
+	end,
+})
+local Toggle = Tab:CreateToggle({
+	Name = "Walkfling",
+	CurrentValue = false,
+	Flag = "WF",
+	Callback = function(Value)
+		fling = Value
+	end,
+})
+local Toggle = Tab:CreateToggle({
+	Name = "Fake Run",
+	CurrentValue = false,
+	Flag = "FR", 
+	Callback = function(Value)
+		fakerun = Value
+	end,
+})
+local Toggle = Tab:CreateToggle({
+	Name = "Inf Jump",
+	CurrentValue = false,
+	Flag = "IJ", 
+	Callback = function(Value)
+		infjump = Value
+	end,
+})
+local Toggle = Tab:CreateToggle({
+	Name = "(Stable) Inf Jump",
+	CurrentValue = false,
+	Flag = "IJ", 
+	Callback = function(Value)
+		infjumpv2 = Value
+	end,
+})
+local Toggle = Tab:CreateToggle({
+	Name = "Anti-Teleport (best for anticheat games)",
+	CurrentValue = false,
+	Flag = "ANTITeleport", 
+	Callback = function(Value)
+		antiteleport = Value
+	end,
+})
+local Toggle = Tab:CreateToggle({
+	Name = "Anti-Fling V2",
+	CurrentValue = false,
+	Flag = "AntiFling", 
+	Callback = function(Value)
+		antifling = Value
+	end,
+})
+Tab:CreateButton({
+	Name = "Dipping parts",
+	Callback = function()
+		partsdipping = true
+	end
+})
+local Toggle = Tab3:CreateToggle({
+	Name = "Inf Stamina",
+	CurrentValue = false,
+	Flag = "infstamina",
+	Callback = function(Value)
+		if Value == true then
+			if game.Players.LocalPlayer.Character:FindFirstChild("Advantage") then
+				game.Players.LocalPlayer.Character:FindFirstChild("Advantage").Value = math.huge
+			end
+		else
+			if game.Players.LocalPlayer.Character:FindFirstChild("Advantage") then
+				game.Players.LocalPlayer.Character:FindFirstChild("Advantage").Value = 1
+			end
+		end
+	end,
+})
+Tab:CreateButton({
+	Name = "Spawn F3X",
+	Callback = function()
+		local obj = game:GetObjects("rbxassetid://142785488")[1] -- F3X asset
+		obj.Parent = game.Players.LocalPlayer.Backpack
+
+		for _,desc in ipairs(obj:GetDescendants()) do
+			if desc:IsA("Script") then
+				desc:Destroy() -- remove server-only scripts
+			end
+		end
+
+	end
+})
+Tab:CreateButton({
+	Name = "Load Instance Explorer",
+	Callback = function()		loadstring(game:HttpGet("https://gist.githubusercontent.com/robloxluakrnlaccount/c54cf333afc0fde82cbcd80ef15ab3bd/raw/instance%2520explorer.lua"))()
+	end
+})
+-- ✅ Optimized script without duplicate locals
+
+-- Optimized render loop
+local function render()
+	local char = player.Character
+	if not char then return end
+
+	for _, v in ipairs(char:GetDescendants()) do
+		if v:IsA("BasePart") then
+			if noclip then
+				v.CanCollide = false
+				v.LocalTransparencyModifier = 0.5
+			else
+				v.LocalTransparencyModifier = 0
+			end
+		end
+	end
+
+	char:WaitForChild("Humanoid").WalkSpeed = speed
+end
+
+-- Instead of connecting 7x, just one RenderStepped is enough
+RunService.RenderStepped:Connect(render)
+
+
+-- Anti-teleportation (runs once with task loop, no multiple connections)
+local function antiteleportation()
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hrp = char:WaitForChild("HumanoidRootPart")
+	local lastPos = hrp.Position
+
+	while antiteleport and task.wait() do
+		local distance = (hrp.Position - lastPos).Magnitude
+		if distance > 5 then
+			hrp.CFrame = CFrame.new(lastPos)
+			hrp.Anchored = false
+		end
+		lastPos = hrp.Position
 	end
 end
+task.spawn(antiteleportation)
 
-local promptUser = 2
 
-if promptUser == 1 and prompt and type(prompt.create) == "function" then
-	prompt.create(
-		'Be cautious when running scripts',
-	    [[Please be careful when running scripts from unknown developers. This script has already been ran.
+-- Infinite Jump
+local waiting = false
+local function InfJumpRender()
+	local char = player.Character
+	if not char then return end
+	local humanoid = char:FindFirstChildOfClass("Humanoid")
+	local rootPart = char:FindFirstChild("HumanoidRootPart")
+	if not humanoid or not rootPart then return end
 
-<font transparency='0.3'>Some scripts may steal your items or in-game goods.</font>]],
-		'Okay',
-		'',
-		function()
+	if infjump and not waiting and humanoid.Jump then
+		local currentVel = rootPart.AssemblyLinearVelocity
+		humanoid.UseJumpPower = true
+		rootPart.AssemblyLinearVelocity = Vector3.new(
+			currentVel.X,
+			humanoid.JumpPower,
+			currentVel.Z
+		)
 
+		waiting = true
+		repeat task.wait() until not humanoid.Jump
+		waiting = false
+	end
+end
+RunService.RenderStepped:Connect(InfJumpRender)
+
+
+-- Fake Run
+local waiting2 = false
+local function RunRenderFakeRun()
+	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+	if not root then return end
+
+	if fakerun and not waiting2 then
+		root.AssemblyLinearVelocity = Vector3.new(0,0,50)
+		root.Anchored = true
+	else
+		root.Anchored = false
+	end
+end
+RunService.RenderStepped:Connect(RunRenderFakeRun)
+
+
+-- Fling
+local running = false
+local function start()
+	if running or not fling then return end
+	running = true
+
+	while fling and task.wait() do
+		for _, v in ipairs(workspace:GetChildren()) do
+			if v:IsA("Model") then
+				local p = Players:GetPlayerFromCharacter(v)
+				if p then
+					local char = p.Character
+					if char then
+						local root = char:FindFirstChild("HumanoidRootPart")
+						if root then
+							root.AssemblyLinearVelocity = Vector3.new(0,1000000,0)
+						end
+					end
+				end
+			end
 		end
-	)
+	end
+	running = false
 end
+RunService.RenderStepped:Connect(start)
 
-if debugX then
-	warn('Moving on to continue initialisation')
+
+-- Anti-fling
+local function antiflingrun()
+	local char = player.Character
+	if not char then return end
+	local root = char:FindFirstChild("HumanoidRootPart")
+	if antifling and root then
+		root.AssemblyLinearVelocity = Vector3.new(0,0,0)
+	end
 end
-
-local RayfieldLibrary = {
-	Flags = {},
-	Theme = {
-		Default = {
-			TextColor = Color3.fromRGB(240, 240, 240),
-
-			Background = Color3.fromRGB(25, 25, 25),
-			Topbar = Color3.fromRGB(34, 34, 34),
-			Shadow = Color3.fromRGB(20, 20, 20),
-
-			NotificationBackground = Color3.fromRGB(20, 20, 20),
-			NotificationActionsBackground = Color3.fromRGB(230, 230, 230),
-
-			TabBackground = Color3.fromRGB(80, 80, 80),
-			TabStroke = Color3.fromRGB(85, 85, 85),
-			TabBackgroundSelected = Color3.fromRGB(210, 210, 210),
-			TabTextColor = Color3.fromRGB(240, 240, 240),
-			SelectedTabTextColor = Color3.fromRGB(50, 50, 50),
-
-			ElementBackground = Color3.fromRGB(35, 35, 35),
-			ElementBackgroundHover = Color3.fromRGB(40, 40, 40),
-			SecondaryElementBackground = Color3.fromRGB(25, 25, 25),
-			ElementStroke = Color3.fromRGB(50, 50, 50),
-			SecondaryElementStroke = Color3.fromRGB(40, 40, 40),
-
-			SliderBackground = Color3.fromRGB(50, 138, 220),
-			SliderProgress = Color3.fromRGB(50, 138, 220),
-			SliderStroke = Color3.fromRGB(58, 163, 255),
-
-			ToggleBackground = Color3.fromRGB(30, 30, 30),
-			ToggleEnabled = Color3.fromRGB(0, 146, 214),
-			ToggleDisabled = Color3.fromRGB(100, 100, 100),
-			ToggleEnabledStroke = Color3.fromRGB(0, 170, 255),
-			ToggleDisabledStroke = Color3.fromRGB(125, 125, 125),
-			ToggleEnabledOuterStroke = Color3.fromRGB(100, 100, 100),
-			ToggleDisabledOuterStroke = Color3.fromRGB(65, 65, 65),
-
-			DropdownSelected = Color3.fromRGB(40, 40, 40),
-			DropdownUnselected = Color3.fromRGB(30, 30, 30),
-
-			InputBackground = Color3.fromRGB(30, 30, 30),
-			InputStroke = Color3.fromRGB(65, 65, 65),
-			PlaceholderColor = Color3.fromRGB(178, 178, 178)
-		},
-
-		Ocean = {
-			TextColor = Color3.fromRGB(230, 240, 240),
-
-			Background = Color3.fromRGB(20, 30, 30),
-			Topbar = Color3.fromRGB(25, 40, 40),
-			Shadow = Color3.fromRGB(15, 20, 20),
-
-			NotificationBackground = Color3.fromRGB(25, 35, 35),
-			NotificationActionsBackground = Color3.fromRGB(230, 240, 240),
-
-			TabBackground = Color3.fromRGB(40, 60, 60),
-			TabStroke = Color3.fromRGB(50, 70, 70),
-			TabBackgroundSelected = Color3.fromRGB(100, 180, 180),
-			TabTextColor = Color3.fromRGB(210, 230, 230),
-			SelectedTabTextColor = Color3.fromRGB(20, 50, 50),
-
-			ElementBackground = Color3.fromRGB(30, 50, 50),
-			ElementBackgroundHover = Color3.fromRGB(40, 60, 60),
-			SecondaryElementBackground = Color3.fromRGB(30, 45, 45),
-			ElementStroke = Color3.fromRGB(45, 70, 70),
-			SecondaryElementStroke = Color3.fromRGB(40, 65, 65),
-
-			SliderBackground = Color3.fromRGB(0, 110, 110),
-			SliderProgress = Color3.fromRGB(0, 140, 140),
-			SliderStroke = Color3.fromRGB(0, 160, 160),
-
-			ToggleBackground = Color3.fromRGB(30, 50, 50),
-			ToggleEnabled = Color3.fromRGB(0, 130, 130),
-			ToggleDisabled = Color3.fromRGB(70, 90, 90),
-			ToggleEnabledStroke = Color3.fromRGB(0, 160, 160),
-			ToggleDisabledStroke = Color3.fromRGB(85, 105, 105),
-			ToggleEnabledOuterStroke = Color3.fromRGB(50, 100, 100),
-			ToggleDisabledOuterStroke = Color3.fromRGB(45, 65, 65),
-
-			DropdownSelected = Color3.fromRGB(30, 60, 60),
-			DropdownUnselected = Color3.fromRGB(25, 40, 40),
-
-			InputBackground = Color3.fromRGB(30, 50, 50),
-			InputStroke = Color3.fromRGB(50, 70, 70),
-			PlaceholderColor = Color3.fromRGB(140, 160, 160)
-		},
-
-		AmberGlow = {
-			TextColor = Color3.fromRGB(255, 245, 230),
-
-			Background = Color3.fromRGB(45, 30, 20),
-			Topbar = Color3.fromRGB(55, 40, 25),
-			Shadow = Color3.fromRGB(35, 25, 15),
-
-			NotificationBackground = Color3.fromRGB(50, 35, 25),
-			NotificationActionsBackground = Color3.fromRGB(245, 230, 215),
-
-			TabBackground = Color3.fromRGB(75, 50, 35),
-			TabStroke = Color3.fromRGB(90, 60, 45),
-			TabBackgroundSelected = Color3.fromRGB(230, 180, 100),
-			TabTextColor = Color3.fromRGB(250, 220, 200),
-			SelectedTabTextColor = Color3.fromRGB(50, 30, 10),
-
-			ElementBackground = Color3.fromRGB(60, 45, 35),
-			ElementBackgroundHover = Color3.fromRGB(70, 50, 40),
-			SecondaryElementBackground = Color3.fromRGB(55, 40, 30),
-			ElementStroke = Color3.fromRGB(85, 60, 45),
-			SecondaryElementStroke = Color3.fromRGB(75, 50, 35),
-
-			SliderBackground = Color3.fromRGB(220, 130, 60),
-			SliderProgress = Color3.fromRGB(250, 150, 75),
-			SliderStroke = Color3.fromRGB(255, 170, 85),
-
-			ToggleBackground = Color3.fromRGB(55, 40, 30),
-			ToggleEnabled = Color3.fromRGB(240, 130, 30),
-			ToggleDisabled = Color3.fromRGB(90, 70, 60),
-			ToggleEnabledStroke = Color3.fromRGB(255, 160, 50),
-			ToggleDisabledStroke = Color3.fromRGB(110, 85, 75),
-			ToggleEnabledOuterStroke = Color3.fromRGB(200, 100, 50),
-			ToggleDisabledOuterStroke = Color3.fromRGB(75, 60, 55),
-
-			DropdownSelected = Color3.fromRGB(70, 50, 40),
-			DropdownUnselected = Color3.fromRGB(55, 40, 30),
-
-			InputBackground = Color3.fromRGB(60, 45, 35),
-			InputStroke = Color3.fromRGB(90, 65, 50),
-			PlaceholderColor = Color3.fromRGB(190, 150, 130)
-		},
-
-		Light = {
-			TextColor = Color3.fromRGB(40, 40, 40),
-
-			Background = Color3.fromRGB(245, 245, 245),
-			Topbar = Color3.fromRGB(230, 230, 230),
-			Shadow = Color3.fromRGB(200, 200, 200),
-
-			NotificationBackground = Color3.fromRGB(250, 250, 250),
-			NotificationActionsBackground = Color3.fromRGB(240, 240, 240),
-
-			TabBackground = Color3.fromRGB(235, 235, 235),
-			TabStroke = Color3.fromRGB(215, 215, 215),
-			TabBackgroundSelected = Color3.fromRGB(255, 255, 255),
-			TabTextColor = Color3.fromRGB(80, 80, 80),
-			SelectedTabTextColor = Color3.fromRGB(0, 0, 0),
-
-			ElementBackground = Color3.fromRGB(240, 240, 240),
-			ElementBackgroundHover = Color3.fromRGB(225, 225, 225),
-			SecondaryElementBackground = Color3.fromRGB(235, 235, 235),
-			ElementStroke = Color3.fromRGB(210, 210, 210),
-			SecondaryElementStroke = Color3.fromRGB(210, 210, 210),
-
-			SliderBackground = Color3.fromRGB(150, 180, 220),
-			SliderProgress = Color3.fromRGB(100, 150, 200), 
-			SliderStroke = Color3.fromRGB(120, 170, 220),
-
-			ToggleBackground = Color3.fromRGB(220, 220, 220),
-			ToggleEnabled = Color3.fromRGB(0, 146, 214),
-			ToggleDisabled = Color3.fromRGB(150, 150, 150),
-			ToggleEnabledStroke = Color3.fromRGB(0, 170, 255),
-			ToggleDisabledStroke = Color3.fromRGB(170, 170, 170),
-			ToggleEnabledOuterStroke = Color3.fromRGB(100, 100, 100),
-			ToggleDisabledOuterStroke = Color3.fromRGB(180, 180, 180),
-
-			DropdownSelected = Color3.fromRGB(230, 230, 230),
-			DropdownUnselected = Color3.fromRGB(220, 220, 220),
-
-			InputBackground = Color3.fromRGB(240, 240, 240),
-			InputStroke = Color3.fromRGB(180, 180, 180),
-			PlaceholderColor = Color3.fromRGB(140, 140, 140)
-		},
-
-		Amethyst = {
-			TextColor = Color3.fromRGB(240, 240, 240),
-
-			Background = Color3.fromRGB(30, 20, 40),
-			Topbar = Color3.fromRGB(40, 25, 50),
-			Shadow = Color3.fromRGB(20, 15, 30),
-
-			NotificationBackground = Color3.fromRGB(35, 20, 40),
-			NotificationActionsBackground = Color3.fromRGB(240, 240, 250),
-
-			TabBackground = Color3.fromRGB(60, 40, 80),
-			TabStroke = Color3.fromRGB(70, 45, 90),
-			TabBackgroundSelected = Color3.fromRGB(180, 140, 200),
-			TabTextColor = Color3.fromRGB(230, 230, 240),
-			SelectedTabTextColor = Color3.fromRGB(50, 20, 50),
-
-			ElementBackground = Color3.fromRGB(45, 30, 60),
-			ElementBackgroundHover = Color3.fromRGB(50, 35, 70),
-			SecondaryElementBackground = Color3.fromRGB(40, 30, 55),
-			ElementStroke = Color3.fromRGB(70, 50, 85),
-			SecondaryElementStroke = Color3.fromRGB(65, 45, 80),
-
-			SliderBackground = Color3.fromRGB(100, 60, 150),
-			SliderProgress = Color3.fromRGB(130, 80, 180),
-			SliderStroke = Color3.fromRGB(150, 100, 200),
-
-			ToggleBackground = Color3.fromRGB(45, 30, 55),
-			ToggleEnabled = Color3.fromRGB(120, 60, 150),
-			ToggleDisabled = Color3.fromRGB(94, 47, 117),
-			ToggleEnabledStroke = Color3.fromRGB(140, 80, 170),
-			ToggleDisabledStroke = Color3.fromRGB(124, 71, 150),
-			ToggleEnabledOuterStroke = Color3.fromRGB(90, 40, 120),
-			ToggleDisabledOuterStroke = Color3.fromRGB(80, 50, 110),
-
-			DropdownSelected = Color3.fromRGB(50, 35, 70),
-			DropdownUnselected = Color3.fromRGB(35, 25, 50),
-
-			InputBackground = Color3.fromRGB(45, 30, 60),
-			InputStroke = Color3.fromRGB(80, 50, 110),
-			PlaceholderColor = Color3.fromRGB(178, 150, 200)
-		},
-
-		Green = {
-			TextColor = Color3.fromRGB(30, 60, 30),
-
-			Background = Color3.fromRGB(235, 245, 235),
-			Topbar = Color3.fromRGB(210, 230, 210),
-			Shadow = Color3.fromRGB(200, 220, 200),
-
-			NotificationBackground = Color3.fromRGB(240, 250, 240),
-			NotificationActionsBackground = Color3.fromRGB(220, 235, 220),
-
-			TabBackground = Color3.fromRGB(215, 235, 215),
-			TabStroke = Color3.fromRGB(190, 210, 190),
-			TabBackgroundSelected = Color3.fromRGB(245, 255, 245),
-			TabTextColor = Color3.fromRGB(50, 80, 50),
-			SelectedTabTextColor = Color3.fromRGB(20, 60, 20),
-
-			ElementBackground = Color3.fromRGB(225, 240, 225),
-			ElementBackgroundHover = Color3.fromRGB(210, 225, 210),
-			SecondaryElementBackground = Color3.fromRGB(235, 245, 235), 
-			ElementStroke = Color3.fromRGB(180, 200, 180),
-			SecondaryElementStroke = Color3.fromRGB(180, 200, 180),
-
-			SliderBackground = Color3.fromRGB(90, 160, 90),
-			SliderProgress = Color3.fromRGB(70, 130, 70),
-			SliderStroke = Color3.fromRGB(100, 180, 100),
-
-			ToggleBackground = Color3.fromRGB(215, 235, 215),
-			ToggleEnabled = Color3.fromRGB(60, 130, 60),
-			ToggleDisabled = Color3.fromRGB(150, 175, 150),
-			ToggleEnabledStroke = Color3.fromRGB(80, 150, 80),
-			ToggleDisabledStroke = Color3.fromRGB(130, 150, 130),
-			ToggleEnabledOuterStroke = Color3.fromRGB(100, 160, 100),
-			ToggleDisabledOuterStroke = Color3.fromRGB(160, 180, 160),
-
-			DropdownSelected = Color3.fromRGB(225, 240, 225),
-			DropdownUnselected = Color3.fromRGB(210, 225, 210),
-
-			InputBackground = Color3.fromRGB(235, 245, 235),
-			InputStroke = Color3.fromRGB(180, 200, 180),
-			PlaceholderColor = Color3.fromRGB(120, 140, 120)
-		},
-
-		Bloom = {
-			TextColor = Color3.fromRGB(60, 40, 50),
-
-			Background = Color3.fromRGB(255, 240, 245),
-			Topbar = Color3.fromRGB(250, 220, 225),
-			Shadow = Color3.fromRGB(230, 190, 195),
-
-			NotificationBackground = Color3.fromRGB(255, 235, 240),
-			NotificationActionsBackground = Color3.fromRGB(245, 215, 225),
-
-			TabBackground = Color3.fromRGB(240, 210, 220),
-			TabStroke = Color3.fromRGB(230, 200, 210),
-			TabBackgroundSelected = Color3.fromRGB(255, 225, 235),
-			TabTextColor = Color3.fromRGB(80, 40, 60),
-			SelectedTabTextColor = Color3.fromRGB(50, 30, 50),
-
-			ElementBackground = Color3.fromRGB(255, 235, 240),
-			ElementBackgroundHover = Color3.fromRGB(245, 220, 230),
-			SecondaryElementBackground = Color3.fromRGB(255, 235, 240), 
-			ElementStroke = Color3.fromRGB(230, 200, 210),
-			SecondaryElementStroke = Color3.fromRGB(230, 200, 210),
-
-			SliderBackground = Color3.fromRGB(240, 130, 160),
-			SliderProgress = Color3.fromRGB(250, 160, 180),
-			SliderStroke = Color3.fromRGB(255, 180, 200),
-
-			ToggleBackground = Color3.fromRGB(240, 210, 220),
-			ToggleEnabled = Color3.fromRGB(255, 140, 170),
-			ToggleDisabled = Color3.fromRGB(200, 180, 185),
-			ToggleEnabledStroke = Color3.fromRGB(250, 160, 190),
-			ToggleDisabledStroke = Color3.fromRGB(210, 180, 190),
-			ToggleEnabledOuterStroke = Color3.fromRGB(220, 160, 180),
-			ToggleDisabledOuterStroke = Color3.fromRGB(190, 170, 180),
-
-			DropdownSelected = Color3.fromRGB(250, 220, 225),
-			DropdownUnselected = Color3.fromRGB(240, 210, 220),
-
-			InputBackground = Color3.fromRGB(255, 235, 240),
-			InputStroke = Color3.fromRGB(220, 190, 200),
-			PlaceholderColor = Color3.fromRGB(170, 130, 140)
-		},
-
-		DarkBlue = {
-			TextColor = Color3.fromRGB(230, 230, 230),
-
-			Background = Color3.fromRGB(20, 25, 30),
-			Topbar = Color3.fromRGB(30, 35, 40),
-			Shadow = Color3.fromRGB(15, 20, 25),
-
-			NotificationBackground = Color3.fromRGB(25, 30, 35),
-			NotificationActionsBackground = Color3.fromRGB(45, 50, 55),
-
-			TabBackground = Color3.fromRGB(35, 40, 45),
-			TabStroke = Color3.fromRGB(45, 50, 60),
-			TabBackgroundSelected = Color3.fromRGB(40, 70, 100),
-			TabText
+RunService.RenderStepped:Connect(antiflingrun)
+
+
+-- Infinite Jump v2
+UserInputService.JumpRequest:Connect(function()
+	local char = player.Character
+	if not char then return end
+	local humanoid = char:FindFirstChildOfClass("Humanoid")
+	if infjumpv2 and humanoid then
+		humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+	end
+end)
+
+
+-- Part stretching
+RunService.RenderStepped:Connect(function()
+	if partsdipping then
+		for _, v in ipairs(workspace:GetChildren()) do
+			if v:IsA("BasePart") and not Players:GetPlayerFromCharacter(v.Parent) then
+				local range = 10
+				local pos = player:DistanceFromCharacter(Vector3.new(v.Position.X,4,v.Position.Z))
+				if pos > range then
+					pos = range
+				end
+				v.Size = Vector3.new(v.Size.X, pos, v.Size.Z)
+			end
+		end
+	end
+	end)
+	end
