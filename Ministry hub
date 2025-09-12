@@ -37,7 +37,7 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local MainTab MainWindow:CreateTab("auto fishing", 4483362458)
+local Tab = Window:CreateTab("Tab Example", 4483362458) -- Title, Image
 
 local Button = Tab:CreateButton({
    Name = "auto fishing",
