@@ -4,7 +4,7 @@ local Window = Rayfield:CreateWindow({
    Name = "minis",
    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
    LoadingTitle = "Rayfield Interface Suite",
-   LoadingSubtitle = "by Sirius",
+   LoadingSubtitle = "by minis",
    ShowText = "Rayfield", -- for mobile users to unhide rayfield, change if you'd like
    Theme = "Bloom", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
@@ -37,8 +37,11 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local = Window:CreateTab("auto fishing", 4483362458) -- Title, Image
+local MainTab MainWindow:CreateTab("auto fishing", 4483362458)
 
-local Tab = Window:CreateTab("auto fishing", "rewind")
-
-Section:Set("auto fast")
+local Button = Tab:CreateButton({
+   Name = "auto fishing",
+   Callback = function()
+   -- The function that takes place when the button is pressed
+   end,
+})
